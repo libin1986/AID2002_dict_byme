@@ -1,0 +1,89 @@
+第二阶段的规划：HTTPSERVER3.0(自己看视频)   2天 + 1天
+2
+
+3 ## 电子词典 dict ---> words  id   word  mean
+4
+
+5 ### 功能说明
+6
+
+7 > 用户可以登录和注册(电商项目 -> 登录和注册)
+8 >     * 登录凭借用户名和密码登录
+9 >
+10 > - 注册要求用户必须填写用户名，密码，其他内容自定
+11 > - 用户名要求不能重复
+12 > - 要求用户信息能够长期保存    数据的持久化--》存入到数据库,mysql
+13
+
+14 > 可以通过基本的图形界面print以提示客户端输入。
+15 >
+16 > - 程序分为服务端和客户端两部分
+17 > - 客户端通过print打印简单界面输入命令发起请求
+18 > - 服务端主要负责逻辑数据处理
+19 > - 启动服务端后应该能满足多个客户端同时操作
+20
+
+21 > 客户端启动后即进入一级界面，包含如下功能：登录    注册    退出
+22
+
+23 ```
+24 * 退出后即退出该软件
+25 * 登录成功即进入二级界面，失败回到一级界面
+26 * 注册成功可以回到一级界面继续登录，也可以直接用注册用户进入二级界面
+27 ```
+28
+
+29 > 用户登录后进入二级界面，功能如下：查单词    历史记录(10条)    注销
+30
+
+31 ```
+32 * 选择注销则回到一级界面
+33 * 查单词：循环输入单词，得到单词解释，输入特殊符号退出单词查询状态
+34 * 历史记录：查询当前用户的查词记录，要求记录包含name   word   time。可以查看所有记录或者前10条均可。
+35 ```
+36 HTTPSERVER3.0(自己看视频)   2天 + 1天
+37 1. 确定技术方案
+38     * socket套接字(tcp)
+39     * 多进程
+40     * 细节：对查询时间进行倒序排序，limit 10
+41 2. 创建表
+42     - 单词表 (数据库dict中words表)
+43     - 用户表 user (id, username, password)
+44         CREATE TABLE user (
+45             id INT PRIMARY KEY AUTO_INCREMENT,
+46             username VARCHAR(32) NOT NULL,
+47             password VARCHAR(32) NOT NULL
+48         );
+49     - 历史记录 history (id, username, word, time)
+50         CREATE TABLE history (
+51             id INT PRIMARY KEY AUTO_INCREMENT,
+52             username VARCHAR(32) NOT NULL,
+53             word VARCHAR(32) NOT NULL,
+54             time DATETIME DEFAULT NOW()  -- now()表示当前系统时间
+55         );
+56 3. 项目结构设计
+57     客户端：
+58     服务端(mvc)：逻辑处理业务(controller)，数据库操作(model), 界面(view)
+59 4. 功能
+60     网络搭建(socket通信)
+61     一级菜单(用户未登录)：
+62         注册 向数据库user表中插入数据
+63         登录 查询数据库user表
+64         退出
+65     二级菜单(用户已登录)
+66         查单词 查询数据库中的words表，向数据库history表中插入数据
+67         查询历史记录 查询数据库中的history表
+68         注销
+69
+
+70 将项目同步到git
+71 1. 在day71路径下执行 git init，初始化git仓库
+72 2. 编写.gitignore文件，过滤掉__pycache__/文件
+73 3. 将所有在工作区的代码提交到暂存区 git add .
+74 4. 将暂存区的代码提交到本地仓库 git commit -m"提交电子词典项目v5.0"
+75 5. 在github创建远程仓库
+76     5.1  创建远程仓库
+77         git remote add origin(如果重复可改名) https://github.com/xxxxx.git
+78     5.2 让本地仓库和远程仓库建立连接
+79         git push -u origin(如果重复可改名) master
+80     5.3 刷新页面，会发现项目已经同步到了github
